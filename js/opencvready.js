@@ -1,13 +1,58 @@
+const PRESETS = {
+  default: {
+    constant: 6,
+    blockSize: 15,
+    invert: false,
+  },
+  ghost1: {
+    constant: 0,
+    blockSize: 3,
+    invert: true,
+  },
+  ghost2: {
+    constant: -5,
+    blockSize: 19,
+    invert: true,
+  },
+  sketch: {
+    constant: 2,
+    blockSize: 3,
+    invert: false,
+  },
+  dark1: {
+    constant: -1,
+    blockSize: 3,
+    invert: false,
+  },
+  dark2: {
+    constant: 7,
+    blockSize: 21,
+    invert: true,
+  },
+  rorschach: {
+    constant: -5,
+    blockSize: 105,
+    invert: true,
+  },
+};
+
 function openCvReady() {
   cv["onRuntimeInitialized"] = () => {
     let video = document.getElementById("cam_input"); // video is the id of video tag
+    let canvas = document.getElementById("canvas_output");
+    let slider_constant = document.getElementById("slider_constant");
+    let slider_block_size = document.getElementById("slider_block_size");
+    let inverter = document.getElementById("inverter");
+    let constant_output = document.getElementById("constant_output");
+    let block_size_output = document.getElementById("block_size_output");
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: false })
-      .then(function (stream) {
+      .then((stream) => {
         video.srcObject = stream;
         video.play();
       })
-      .catch(function (err) {
+      .catch((err) => {
         alert("An error occurred! " + err);
       });
     let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
@@ -15,15 +60,49 @@ function openCvReady() {
     let cap = new cv.VideoCapture(cam_input);
     const FPS = 60;
 
+    const presetSelect = document.getElementById("preset-select");
+    presetSelect.addEventListener("change", (event) => {
+      const presetSelected = event.target.value;
+      slider_block_size.value = PRESETS[presetSelected].blockSize;
+      slider_constant.value = PRESETS[presetSelected].constant;
+      inverter.checked = PRESETS[presetSelected].invert;
+      constant_output.innerHTML = slider_constant.value;
+      block_size_output.innerHTML = slider_block_size.value;
+    });
+
+    slider_constant.oninput = () => {
+      constant_output.innerHTML = slider_constant.value;
+    };
+
+    slider_block_size.oninput = () => {
+      block_size_output.innerHTML = slider_block_size.value;
+    };
+
     function processVideo() {
       let begin = Date.now();
       cap.read(src);
       cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
+      cv.GaussianBlur(dst, dst, new cv.Size(3, 3), 1, 1, cv.BORDER_DEFAULT);
+
+      cv.adaptiveThreshold(
+        dst,
+        dst,
+        250,
+        cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv.THRESH_BINARY,
+        parseInt(slider_block_size.value),
+        parseInt(slider_constant.value)
+      );
+      if (inverter.checked) {
+        cv.bitwise_not(dst, dst);
+      }
+
       cv.imshow("canvas_output", dst);
       // schedule next one.
       let delay = 1000 / FPS - (Date.now() - begin);
       setTimeout(processVideo, delay);
     }
+
     // schedule first one.
     setTimeout(processVideo, 0);
   };

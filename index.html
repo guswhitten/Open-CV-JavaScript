@@ -6,9 +6,77 @@
     <script async src="js/opencv.js" onload="openCvReady();"></script>
     <script src="js/utils.js"></script>
     <script src="js/opencvready.js" type="text/JavaScript"></script>
+    <link rel="stylesheet" href="css/styling.css" />
   </head>
   <body onload="openCvReady()">
-    <video id="cam_input" height="480" width="640"></video>
-    <canvas id="canvas_output"></canvas>
+    <center>
+      <h1>Image Processing using OpenCV.js</h1>
+      <h3>By: Whitten Oswald</h3>
+
+      <!-- display video outputs -->
+      <div>
+        <span style="display: inline-block">
+          <h1>Before</h1>
+          <video id="cam_input" height="480" width="640"></video>
+        </span>
+        <span style="display: inline-block">
+          <h1>After</h1>
+          <canvas id="canvas_output"></canvas>
+        </span>
+      </div>
+
+      <!-- display controls -->
+      <h2>Control Panel</h2>
+      <div>
+        <span style="display: inline-block">
+          <div>
+            <label for="slider_constant">Constant: </label>
+            <input
+              type="range"
+              id="slider_constant"
+              min="-5"
+              max="30"
+              value="6"
+              title="Constant value subtracted from the mean or weighted mean. Normally, it is positive but may be zero or negative as well."
+            />
+            <span id="constant_output">6</span>
+          </div>
+
+          <div>
+            <label for="slider_block_size">Block Size: </label>
+            <input
+              type="range"
+              id="slider_block_size"
+              min="3"
+              max="105"
+              value="15"
+              step="2"
+              title="	Size of a pixel neighborhood that is used to calculate a threshold value for the pixel: 3, 5, 7, and so on."
+            />
+            <span id="block_size_output">15</span>
+          </div>
+
+          <div>
+            <label for="toggle-switch">Invert? </label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="inverter" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </span>
+        <span style="display: inline=block">
+          <label for="preset-select">Presets:</label>
+          <select id="preset-select">
+            <option value="default">Default</option>
+            <option value="ghost1">Ghost-1</option>
+            <option value="ghost2">Ghost-2</option>
+            <option value="sketch">Sketch</option>
+            <option value="dark1">Dark-1</option>
+            <option value="dark2">Dark-2</option>
+            <option value="rorschach">Rorschach</option>
+          </select>
+        </span>
+      </div>
+    </center>
   </body>
 </html>

@@ -28,6 +28,19 @@
       <!-- display controls -->
       <h2>Control Panel</h2>
       <div>
+        <div>
+          <label for="preset-select">Presets:</label>
+          <select id="preset-select">
+            <option value="default">Default</option>
+            <option value="ghost1">Ghost-1</option>
+            <option value="ghost2">Ghost-2</option>
+            <option value="sketch">Sketch</option>
+            <option value="dark1">Dark-1</option>
+            <option value="dark2">Dark-2</option>
+            <option value="rorschach">Rorschach</option>
+          </select>
+        </div>
+        <br />
         <span style="display: inline-block">
           <div>
             <label for="slider_constant">Constant: </label>
@@ -64,17 +77,11 @@
             </label>
           </div>
         </span>
-        <span style="display: inline=block">
-          <label for="preset-select">Presets:</label>
-          <select id="preset-select">
-            <option value="default">Default</option>
-            <option value="ghost1">Ghost-1</option>
-            <option value="ghost2">Ghost-2</option>
-            <option value="sketch">Sketch</option>
-            <option value="dark1">Dark-1</option>
-            <option value="dark2">Dark-2</option>
-            <option value="rorschach">Rorschach</option>
-          </select>
+        <span style="display: inline-block">
+          <button id="screenshot" onclick="takeScreenshot()">
+            Take Screenshot!
+          </button>
+          <span>(downloads)</span>
         </span>
       </div>
     </center>

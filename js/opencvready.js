@@ -1,45 +1,16 @@
 const PRESETS = {
-  default: {
-    constant: 6,
-    blockSize: 15,
-    invert: false,
-  },
-  ghost1: {
-    constant: 0,
-    blockSize: 3,
-    invert: true,
-  },
-  ghost2: {
-    constant: -5,
-    blockSize: 19,
-    invert: true,
-  },
-  sketch: {
-    constant: 2,
-    blockSize: 3,
-    invert: false,
-  },
-  dark1: {
-    constant: -1,
-    blockSize: 3,
-    invert: false,
-  },
-  dark2: {
-    constant: 7,
-    blockSize: 21,
-    invert: true,
-  },
-  rorschach: {
-    constant: -5,
-    blockSize: 105,
-    invert: true,
-  },
+  default: { constant: 6, blockSize: 15, invert: false },
+  ghost1: { constant: 0, blockSize: 3, invert: true },
+  ghost2: { constant: -5, blockSize: 19, invert: true },
+  sketch: { constant: 2, blockSize: 3, invert: false },
+  dark1: { constant: -1, blockSize: 3, invert: false },
+  dark2: { constant: 7, blockSize: 21, invert: true },
+  rorschach: { constant: -5, blockSize: 105, invert: true },
 };
 
 function openCvReady() {
   cv["onRuntimeInitialized"] = () => {
     let video = document.getElementById("cam_input"); // video is the id of video tag
-    let canvas = document.getElementById("canvas_output");
     let slider_constant = document.getElementById("slider_constant");
     let slider_block_size = document.getElementById("slider_block_size");
     let inverter = document.getElementById("inverter");
@@ -60,6 +31,7 @@ function openCvReady() {
     let cap = new cv.VideoCapture(cam_input);
     const FPS = 60;
 
+    // set initial values for sliders and add event listeners
     const presetSelect = document.getElementById("preset-select");
     presetSelect.addEventListener("change", (event) => {
       const presetSelected = event.target.value;
@@ -78,6 +50,7 @@ function openCvReady() {
       block_size_output.innerHTML = slider_block_size.value;
     };
 
+    // looping function that transforms each pixel according to the slider values
     function processVideo() {
       let begin = Date.now();
       cap.read(src);
@@ -98,12 +71,40 @@ function openCvReady() {
       }
 
       cv.imshow("canvas_output", dst);
-      // schedule next one.
+      // schedule next one based on frame rate constant.
       let delay = 1000 / FPS - (Date.now() - begin);
       setTimeout(processVideo, delay);
     }
 
-    // schedule first one.
+    // schedule first video transformation.
     setTimeout(processVideo, 0);
   };
+}
+
+function takeScreenshot() {
+  let canvas = document.getElementById("canvas_output");
+
+  const dataURL = canvas.toDataURL("image/jpeg", 1.0);
+  // Create a temporary anchor element
+  const downloadLink = document.createElement("a");
+  downloadLink.href = dataURL;
+  const uuid = generateUuid();
+  downloadLink.download = `screenshot-${uuid}.png`;
+
+  // Append the anchor element to the document body
+  document.body.appendChild(downloadLink);
+  // Trigger a click event on the anchor element to start the download
+  downloadLink.click();
+  // Remove the anchor element from the document body
+  document.body.removeChild(downloadLink);
+}
+
+/*
+Generates a random UUID to append to screenshot.jpg file name for uniqueness.
+*/
+function generateUuid() {
+  const array = new Uint32Array(2);
+  window.crypto.getRandomValues(array);
+  const uuid = array.join("-");
+  return uuid;
 }

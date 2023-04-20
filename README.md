@@ -1,4 +1,3 @@
-Uses open-source openCV.js library to run webcam stream thru image filters and displays on the page. 
+Uses open-source openCV.js library to run webcam stream thru image filters and displays on the webpage. 
 Included controls for manipulating the filter parameters dynamically.
-
-TODO: add feature for allowing user to snap photo and download to PC.
+Included button for snapping screenshot of image-processed video, and downloading to computer
